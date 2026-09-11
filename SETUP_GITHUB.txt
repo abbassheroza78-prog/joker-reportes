@@ -1,0 +1,41 @@
+Joker Reports - GitHub Setup
+
+الملفات الأساسية:
+- pubspec.yaml
+- README.md
+- lib/main.dart
+
+ملف بناء APK:
+.github/workflows/build-apk.yml
+
+إذا كان مدير الملفات يخفي مجلد .github بعد فك الضغط، ارفع الملفات الأساسية أولاً إلى GitHub، ثم أنشئ الملف:
+.github/workflows/build-apk.yml
+
+محتوى ملف workflow:
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.2'
+          channel: stable
+      - name: Flutter pub get
+        run: flutter pub get
+      - name: Build APK
+        run: flutter build apk --release
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: joker-reports-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
